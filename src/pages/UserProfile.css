@@ -1,0 +1,136 @@
+.profile-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  color: #0f172a;
+}
+
+.profile-back {
+  display: inline-block;
+  margin-bottom: 24px;
+  color: #0f766e;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.profile-back:hover {
+  text-decoration: underline;
+}
+
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 32px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+}
+
+.profile-avatar {
+  width: 140px;
+  height: 140px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #ccfbf1;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-info h1 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 32px;
+  overflow-wrap: anywhere;
+}
+
+.profile-info p {
+  margin: 8px 0;
+  color: #64748b;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.profile-info a {
+  color: #0f766e;
+  text-decoration: none;
+}
+
+.profile-info a:hover {
+  text-decoration: underline;
+}
+
+.profile-section {
+  margin-top: 32px;
+}
+
+.profile-section h2 {
+  margin-bottom: 18px;
+  font-size: 24px;
+  color: #0f172a;
+}
+
+.profile-posts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.profile-post {
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+}
+
+.profile-post h3 {
+  margin-top: 0;
+  color: #0f766e;
+}
+
+.profile-post p {
+  color: #64748b;
+  line-height: 1.7;
+}
+
+.profile-message {
+  padding: 40px 20px;
+  text-align: center;
+  color: #64748b;
+}
+
+.profile-error {
+  color: #b91c1c;
+}
+
+@media (max-width: 600px) {
+  .profile-page {
+    padding: 20px 14px;
+  }
+
+  .profile-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px;
+  }
+
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-info h1 {
+    font-size: 25px;
+  }
+}
