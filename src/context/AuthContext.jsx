@@ -1,36 +1,15 @@
+
 import React, {
   createContext,
   useContext,
   useEffect,
   useState,
 } from "react";
+import authApi from "../services/authApi";
 
 const AuthContext = createContext(null);
-
-const USERS_KEY = "techorbit_accounts";
 const SESSION_KEY = "techorbit_user";
-
-function readUsers() {
-  try {
-    const users = JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
-    return Array.isArray(users) ? users : [];
-  } catch {
-    return [];
-  }
-}
-
-async function hashPassword(password) {
-  if (!window.crypto?.subtle) {
-    throw new Error("Secure password hashing is not supported in this browser.");
-  }
-
-  const data = new TextEncoder().encode(password);
-  const hash = await window.crypto.subtle.digest("SHA-256", data);
-
-  return Array.from(new Uint8Array(hash))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
+const TOKEN_KEY = "techorbit_token";
 
 function readSession() {
   try {
@@ -55,69 +34,74 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function register(name, email, password) {
-    const normalizedEmail = email.trim().toLowerCase();
-    const users = readUsers();
+    try {
+      const response = await authApi.post("/signup", {
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+      });
 
-    if (users.some((item) => item.email === normalizedEmail)) {
-      throw new Error("Is email se account pehle se bana hua hai.");
+      const publicUser = response.data.user;
+
+      localStorage.setItem(SESSION_KEY, JSON.stringify(publicUser));
+      setUser(publicUser);
+
+      // Signup ke baad login bhi karwao, taaki token mile.
+      const loginResponse = await authApi.post("/login", {
+        email: email.trim().toLowerCase(),
+        password,
+      });
+
+      localStorage.setItem(TOKEN_KEY, loginResponse.data.token);
+
+      return publicUser;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message ||
+          error.message ||
+          "Account create nahi ho paya."
+      );
     }
-
-    const newUser = {
-      id: crypto.randomUUID(),
-      name: name.trim(),
-      email: normalizedEmail,
-      passwordHash: await hashPassword(password),
-    };
-
-    localStorage.setItem(USERS_KEY, JSON.stringify([...users, newUser]));
-
-    const publicUser = {
-      id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
-    };
-
-    localStorage.setItem(SESSION_KEY, JSON.stringify(publicUser));
-    setUser(publicUser);
-
-    return publicUser;
   }
 
   async function login(email, password) {
-    const normalizedEmail = email.trim().toLowerCase();
-    const passwordHash = await hashPassword(password);
-    const users = readUsers();
+    try {
+      const response = await authApi.post("/login", {
+        email: email.trim().toLowerCase(),
+        password,
+      });
 
-    const foundUser = users.find(
-      (item) =>
-        item.email === normalizedEmail &&
-        item.passwordHash === passwordHash
-    );
+      const publicUser = response.data.user;
 
-    if (!foundUser) {
-      throw new Error("Email ya password galat hai.");
+      localStorage.setItem(TOKEN_KEY, response.data.token);
+      localStorage.setItem(SESSION_KEY, JSON.stringify(publicUser));
+      setUser(publicUser);
+
+      return publicUser;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message ||
+          error.message ||
+          "Login nahi ho paya."
+      );
     }
-
-    const publicUser = {
-      id: foundUser.id,
-      name: foundUser.name,
-      email: foundUser.email,
-    };
-
-    localStorage.setItem(SESSION_KEY, JSON.stringify(publicUser));
-    setUser(publicUser);
-
-    return publicUser;
   }
 
   function logout() {
     localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(TOKEN_KEY);
     setUser(null);
   }
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: Boolean(user), register, login, logout }}
+      value={{
+        user,
+        isAuthenticated: Boolean(user),
+        register,
+        login,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

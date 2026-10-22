@@ -11,6 +11,8 @@ import AddPost from './pages/AddPost';
 import Login from './pages/Login';
 import Signup from "./pages/Signup";
 import NotFound from './pages/NotFound';
+import Posts from './pages/Posts';
+import EditProfile from './pages/EditProfile';
 
 function App() {
   return (
@@ -22,8 +24,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/users" element={<UserDirectory />} />
           <Route path="/users/:id" element={<UserProfile />} />
+          <Route path="/posts" element={<Posts />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
 
           <Route
             path="/add-post"

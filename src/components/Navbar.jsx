@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -40,14 +41,25 @@ function Navbar() {
           >
             Developers
           </NavLink>
+
+          <NavLink
+            to="/posts"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
+            Community
+          </NavLink>
         </nav>
 
         <div className="nav-actions">
           {user ? (
             <>
-              <span className="nav-user">
-                Hi, {user.name}
-              </span>
+              <Link to="/edit-profile" className="signin-link">
+                Edit Profile
+              </Link>
+
+              <span className="nav-user">Hi, {user.name}</span>
 
               <button
                 type="button"
